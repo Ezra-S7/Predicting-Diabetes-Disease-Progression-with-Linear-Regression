@@ -9,7 +9,7 @@ measurements.
 
 Dataset: 442 patients, 10 features, continuous target (disease progression score).
 
-Author: [Your Name]
+Author: Ezra Spivak
 """
 
 import numpy as np
@@ -19,7 +19,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
-# ── 1. Load and inspect the dataset ──────────────────────────────────────────
+#Load and inspect dataset
 
 data = load_diabetes()
 X, y = data.data, data.target
@@ -33,7 +33,7 @@ print(f"  Target    : quantitative disease progression score")
 print(f"  Target range: {y.min():.1f} – {y.max():.1f}  (mean: {y.mean():.1f})")
 print()
 
-# ── 2. Split into training and test sets (80 / 20) ────────────────────────────
+#Split into training and test sets
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.20, random_state=42
@@ -43,21 +43,18 @@ print(f"  Training samples : {X_train.shape[0]}")
 print(f"  Test samples     : {X_test.shape[0]}")
 print()
 
-# ── 3. Feature scaling ────────────────────────────────────────────────────────
-# Standardizing features (mean=0, std=1) makes the regression coefficients
-# directly comparable across features with different units.
-# We fit the scaler ONLY on training data to avoid data leakage.
+#Feature scaling - Standardizing features (mean=0, std=1)
 
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled  = scaler.transform(X_test)
 
-# ── 4. Train the linear regression model ─────────────────────────────────────
+#Train the linear regression model
 
 model = LinearRegression()
 model.fit(X_train_scaled, y_train)
 
-# ── 5. Evaluate on the held-out test set ─────────────────────────────────────
+#Evaluate on the held-out test set
 
 y_pred = model.predict(X_test_scaled)
 
@@ -75,17 +72,13 @@ print(f"  in disease progression scores, with a typical prediction")
 print(f"  error of ±{rmse:.1f} points.")
 print()
 
-# ── 6. 5-fold cross-validation ────────────────────────────────────────────────
-# Cross-validation gives a more reliable performance estimate than a
-# single train/test split.
+#5-fold cross-validation
 
 cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5, scoring="r2")
 print(f"  5-Fold CV R² : {cv_scores.mean():.4f}  (std: {cv_scores.std():.4f})")
 print()
 
-# ── 7. Feature importance via regression coefficients ────────────────────────
-# Because features are standardized, the magnitude of each coefficient
-# reflects how strongly that feature influences the prediction.
+#Feature importance via regression coefficients
 
 feature_importance = sorted(
     zip(data.feature_names, model.coef_),
